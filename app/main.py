@@ -3,6 +3,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import recommendation
+from app.config import get_settings
+from app.config.environment import load_env_file
+
+load_env_file()
+
+settings = get_settings()
 
 app = FastAPI(
     title="Similar Product Recommendation Service",
@@ -24,14 +30,18 @@ app.include_router(recommendation.router, tags=["recommendations"])
 @app.get("/", tags=["status"])
 async def root():
     """Health check endpoint"""
-    return {"status": "ok", "service": "Similar Product Recommendation Service"}
+    return {
+        "status": "ok", 
+        "service": "Similar Product Recommendation Service",
+        "environment": os.getenv("APP_ENV", "development")
+    }
 
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
         "app.main:app",
-        host="0.0.0.0",
-        port=8000,
+        host=settings.api_host,
+        port=settings.api_port,
         reload=True
-    ) 
+    )

@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from app.domain.entities.recommendation import Recommendations
 from app.application.use_cases.get_product_recommendations import GetProductRecommendationsUseCase
 from app.infrastructure.repositories.qdrant_product_repository import QdrantProductRepository
+from app.config import get_settings
 
 
 router = APIRouter()
@@ -30,7 +31,7 @@ def get_recommendations_use_case(
 )
 async def get_recommendation(
     product_id: str = Query(..., description="ID of the product to get recommendations for"),
-    limit: Optional[int] = Query(5, description="Maximum number of recommendations to return"),
+    limit: Optional[int] = Query(None, description="Maximum number of recommendations to return"),
     use_case: GetProductRecommendationsUseCase = Depends(get_recommendations_use_case)
 ):
     """
@@ -38,11 +39,14 @@ async def get_recommendation(
     
     Args:
         product_id: ID of the product to get recommendations for
-        limit: Maximum number of recommendations to return (default: 5)
+        limit: Maximum number of recommendations to return (default from settings)
         
     Returns:
         Recommendations object with similar products
     """
+    settings = get_settings()
+    limit = limit or settings.default_recommendation_limit
+    
     if limit < 1:
         raise HTTPException(status_code=400, detail="Limit must be greater than 0")
     

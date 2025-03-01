@@ -6,6 +6,7 @@ from qdrant_client.http import models
 
 from app.domain.entities.product import Product
 from app.domain.repositories.product_repository import ProductRepository
+from app.config import get_settings
 
 
 class QdrantProductRepository(ProductRepository):
@@ -13,16 +14,18 @@ class QdrantProductRepository(ProductRepository):
     
     def __init__(
         self,
-        collection_name: str = "products",
+        collection_name: Optional[str] = None,
         host: Optional[str] = None,
         port: Optional[int] = None,
-        vector_size: int = 384  # default for all-MiniLM-L6-v2
+        vector_size: Optional[int] = None
     ):
         """Initialize Qdrant repository"""
-        self.collection_name = collection_name
-        self.host = host or os.getenv("QDRANT_HOST", "localhost")
-        self.port = port or int(os.getenv("QDRANT_PORT", "6333"))
-        self.vector_size = vector_size
+        settings = get_settings()
+        
+        self.collection_name = collection_name or settings.qdrant_collection
+        self.host = host or settings.qdrant_host
+        self.port = port or settings.qdrant_port
+        self.vector_size = vector_size or settings.vector_size
         
         self.client = QdrantClient(host=self.host, port=self.port)
         self._ensure_collection_exists()
@@ -138,10 +141,14 @@ class QdrantProductRepository(ProductRepository):
     async def find_similar_products(
         self, 
         product_id: str, 
-        limit: int = 5, 
-        distance_threshold: float = 0.95
+        limit: int = None,
+        distance_threshold: float = None
     ) -> List[Tuple[Product, float]]:
         """Find similar products to the given product ID with similarity scores"""
+        settings = get_settings()
+        limit = limit or settings.default_recommendation_limit
+        distance_threshold = distance_threshold or settings.distance_threshold
+        
         product = await self.get_product_by_id(product_id)
         if not product:
             return []

@@ -23,6 +23,42 @@ This project follows Clean Architecture principles with the following layers:
 - **Infrastructure Layer**: Contains implementations of repositories and external services
 - **API Layer**: Contains FastAPI routes and controllers
 
+## Model
+
+The service uses text embeddings to find similar products. By default, it uses the `all-MiniLM-L6-v2` model from sentence-transformers which has the following characteristics:
+
+- **Model Type**: Sentence Transformer (based on BERT architecture)
+- **Vector Size**: 384 dimensions
+- **Performance**: Good balance between quality and computational efficiency
+- **Use Case**: Optimized for semantic similarity tasks
+- **Languages**: Supports multiple languages with primary focus on English
+- **Size**: ~90MB, making it suitable for deployment in containers
+- **Speed**: Relatively fast inference time compared to larger models
+
+The model converts product descriptions and metadata into dense vector representations (embeddings). These embeddings capture semantic meaning, allowing the system to find products that are conceptually similar rather than just matching keywords.
+
+The embedding process works as follows:
+
+1. Product text (name, description, category) is tokenized and processed
+2. The transformer model generates a fixed-size vector (384 dimensions)
+3. These vectors are stored in Qdrant vector database 
+4. Similarity search uses cosine similarity to find the most relevant products
+5. Products within the same sub-category are prioritized to ensure recommendations are contextually relevant
+
+### Model Configuration
+
+You can configure the embedding model through environment variables:
+
+```
+EMBEDDING_MODEL=all-MiniLM-L6-v2  # Default model
+VECTOR_SIZE=384                   # Vector dimensions
+```
+
+Alternative models that can be used:
+- `paraphrase-MiniLM-L6-v2`: Optimized for paraphrase detection
+- `multi-qa-MiniLM-L6-cos-v1`: Better for question-answering tasks
+- `all-mpnet-base-v2`: Higher quality but more computationally expensive
+
 ## Features
 
 1. **Text Embedding Batch Orchestration**:
@@ -68,6 +104,26 @@ This project follows Clean Architecture principles with the following layers:
    docker-compose exec api python run_pipeline.py --csv-path data/products.csv
    ```
 
+4. Customizing the environment and configuration:
+
+   You can specify the environment and override configuration values by creating a `.env` file in the project root:
+   
+   ```
+   # Set the environment
+   APP_ENV=production
+   
+   # Override specific settings
+   EMBEDDING_MODEL=all-mpnet-base-v2
+   VECTOR_SIZE=768
+   DEFAULT_RECOMMENDATION_LIMIT=10
+   ```
+   
+   Then restart the services:
+   ```
+   docker-compose down
+   docker-compose up -d
+   ```
+
 ### Running Locally (Development)
 
 1. Install dependencies:
@@ -99,6 +155,20 @@ This project follows Clean Architecture principles with the following layers:
 5. Start the API server:
    ```
    uvicorn app.main:app --reload
+   ```
+   
+   To run with a specific environment configuration:
+   ```
+   # Set environment
+   export APP_ENV=production
+   
+   # Run the server
+   uvicorn app.main:app --reload
+   ```
+   
+   Or in a single command:
+   ```
+   APP_ENV=production uvicorn app.main:app --reload
    ```
 
 ## API Documentation
@@ -134,6 +204,58 @@ Response:
   ]
 }
 ```
+
+## Configuration Management
+
+The service uses a centralized configuration management system based on Pydantic for type validation and environment variables for flexibility.
+
+### Environment-Based Configuration
+
+You can run the service in different environments by setting the `APP_ENV` environment variable:
+
+```bash
+# For development (default)
+export APP_ENV=development
+
+# For production
+export APP_ENV=production
+
+# For testing
+export APP_ENV=testing
+```
+
+Each environment can have its own configuration values defined in environment-specific files:
+- `.env` - Base configuration for all environments
+- `.env.development` - Development-specific overrides
+- `.env.production` - Production-specific overrides
+- `.env.testing` - Testing-specific overrides
+
+### Available Configuration Options
+
+| Setting | Environment Variable | Default | Description |
+|---------|---------------------|---------|-------------|
+| API Host | `API_HOST` | 0.0.0.0 | Host to bind the API server |
+| API Port | `API_PORT` | 8000 | Port for the API server |
+| Qdrant Host | `QDRANT_HOST` | localhost | Qdrant vector database host |
+| Qdrant Port | `QDRANT_PORT` | 6333 | Qdrant vector database port |
+| Qdrant Collection | `QDRANT_COLLECTION` | products | Qdrant collection name |
+| Embedding Model | `EMBEDDING_MODEL` | all-MiniLM-L6-v2 | Model name from sentence-transformers |
+| Vector Size | `VECTOR_SIZE` | 384 | Embedding vector dimensions |
+| Default Recommendation Limit | `DEFAULT_RECOMMENDATION_LIMIT` | 5 | Default number of recommendations |
+| Distance Threshold | `DISTANCE_THRESHOLD` | 0.95 | Similarity threshold for recommendations |
+
+### Using the Configuration in Code
+
+The configuration can be accessed in any part of the application using:
+
+```python
+from app.config import get_settings
+
+settings = get_settings()
+vector_size = settings.vector_size
+```
+
+The configuration is cached for performance, ensuring minimal overhead when accessed from multiple places.
 
 ## Prefect Dashboard
 

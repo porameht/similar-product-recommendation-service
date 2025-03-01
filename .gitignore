@@ -25,6 +25,8 @@ venv/
 env/
 ENV/
 .env
+.env.development
+.env.production
 .venv/
 env.bak/
 venv.bak/
