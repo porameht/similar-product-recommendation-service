@@ -2,10 +2,18 @@
 
 A service that recommends similar products to users based on product content using text embeddings and vector search.
 
-## Visualize limit 500
+## Visualization
 
-<img width="1398" alt="Screenshot 2025-03-01 at 1 21 34 PM" src="https://github.com/user-attachments/assets/f35672f3-a801-4fbb-9228-7b7ffd2fa8d8" />
+![Capture-2025-03-01-143017](https://github.com/user-attachments/assets/916112e7-ed40-465e-8740-3e0ee44157d2)
 
+```
+{
+  "limit": 1457,
+  "color_by": {
+    "payload": "sub_category"
+  }
+}
+```
 ## Architecture
 
 This project follows Clean Architecture principles with the following layers:
