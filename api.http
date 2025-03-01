@@ -1,0 +1,15 @@
+
+# Get product recommendations Furniture
+GET http://localhost:8000/get-recommendation?product_id=9030ab71-bf70-4f16-8720-53b65b860d48&limit=5
+
+###
+
+# Get product recommendations Electronics
+GET http://localhost:8000/get-recommendation?product_id=fd80f377-423b-4bfc-b204-813f393e684f&limit=5
+
+###
+
+# Health check
+GET http://localhost:8000/
+
+
