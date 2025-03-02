@@ -261,6 +261,45 @@ The configuration is cached for performance, ensuring minimal overhead when acce
 
 The Prefect dashboard is available at http://localhost:4200 when running with Docker Compose.
 
+## Running Tests
+
+The project uses pytest for testing. Tests are organized to mirror the application structure, following the Clean Architecture principles.
+
+### Running Tests Locally
+
+1. Make sure you have installed the development dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+2. Install pytest-asyncio (required for async tests):
+   ```
+   pip install pytest-asyncio
+   ```
+
+3. Run all tests:
+   ```
+   pytest
+   ```
+
+4. Run tests with coverage report:
+   ```
+   pytest --cov=app
+   ```
+
+5. Run tests for a specific module:
+   ```
+   pytest tests/unit/domain/
+   pytest tests/unit/application/
+   pytest tests/unit/infrastructure/
+   pytest tests/unit/api/
+   ```
+
+6. Run tests with verbose output:
+   ```
+   pytest -v
+   ```
+
 ## Project Structure
 
 ```
