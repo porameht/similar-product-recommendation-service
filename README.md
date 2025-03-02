@@ -323,3 +323,19 @@ The project uses pytest for testing. Tests are organized to mirror the applicati
 ├── run_pipeline.py          # Pipeline runner script
 └── README.md                # This file
 ``` 
+
+## Improvement and Optimizaion Areas
+
+1. **Performance**:
+   - Implement compute-intensive components in Rust for better performance
+   - Use Small Language Models (SLMs) to reduce computational requirements
+   - Optimize vector search with approximate nearest neighbors algorithms
+
+2. **Storage**:
+   - Implement vector compression techniques to reduce embedding storage
+   - Use efficient data partitioning for faster retrieval
+   - Implement caching for frequently requested recommendations
+
+3. **Scalability**:
+   - Add horizontal scaling capabilities for the API layer
+   - Add support for distributed vector database deployments
