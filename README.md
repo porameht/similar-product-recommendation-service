@@ -2,6 +2,10 @@
 
 A service that recommends similar products to users based on product content using text embeddings and vector search.
 
+## System Design
+
+![Leanbiz AI - System Design](https://github.com/user-attachments/assets/186e5bf1-bf73-4e7e-bc3e-64639f5ef80b)
+
 ## Visualization
 
 ![Capture-2025-03-01-143017](https://github.com/user-attachments/assets/916112e7-ed40-465e-8740-3e0ee44157d2)
