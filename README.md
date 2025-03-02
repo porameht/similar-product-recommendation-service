@@ -324,7 +324,7 @@ The project uses pytest for testing. Tests are organized to mirror the applicati
 └── README.md                # This file
 ``` 
 
-## Improvement and Optimizaion Areas
+## Improvement and Optimization Areas
 
 1. **Performance**:
    - Implement compute-intensive components in Rust for better performance
