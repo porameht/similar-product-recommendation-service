@@ -47,7 +47,7 @@ async def get_recommendation(
     settings = get_settings()
     limit = limit or settings.default_recommendation_limit
     
-    if limit < 1:
+    if limit is not None and limit <= 0:
         raise HTTPException(status_code=400, detail="Limit must be greater than 0")
     
     recommendations = await use_case.execute(product_id=product_id, limit=limit)
