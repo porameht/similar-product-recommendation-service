@@ -56,7 +56,8 @@ class QdrantProductRepository(ProductRepository):
             "sub_category": product.sub_category,
             "ratings": product.ratings,
             "no_of_ratings": product.no_of_ratings,
-            "price": product.price
+            "price": product.price,
+            "price_usd": product.price_usd
         }
         
         return product.product_id, product.embedding, payload
@@ -70,7 +71,8 @@ class QdrantProductRepository(ProductRepository):
             sub_category=payload["sub_category"],
             ratings=payload.get("ratings"),
             no_of_ratings=payload.get("no_of_ratings"),
-            price=payload["price"]
+            price=payload["price"],
+            price_usd=payload.get("price_usd")
         )
         
         return product, score

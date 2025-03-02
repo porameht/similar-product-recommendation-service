@@ -12,6 +12,7 @@ class Product(BaseModel):
     ratings: Optional[float] = None
     no_of_ratings: Optional[int] = None
     price: str
+    price_usd: Optional[str] = None
     embedding: Optional[List[float]] = None
     
     def to_dict(self) -> dict:
@@ -24,6 +25,7 @@ class Product(BaseModel):
             "ratings": self.ratings,
             "no_of_ratings": self.no_of_ratings,
             "price": self.price,
+            "price_usd": self.price_usd,
             "embedding": self.embedding
         }
     

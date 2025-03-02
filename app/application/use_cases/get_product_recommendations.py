@@ -39,7 +39,7 @@ class GetProductRecommendationsUseCase:
                         "product_id": product.product_id,
                         "category": product.main_category,
                         "sub_category": product.sub_category,
-                        "price": product.price
+                        "price": product.price_usd,
                     },
                     distance=distance
                 )

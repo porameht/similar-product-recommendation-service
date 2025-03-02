@@ -38,6 +38,27 @@ def read_products_data(csv_path: str) -> pd.DataFrame:
     return df
 
 
+def convert_price_to_usd(price_str: str, exchange_rate: float = 0.035) -> str:
+    """
+    Convert price from Thai Baht to USD.
+    
+    Args:
+        price_str: Price string in Thai Baht format (e.g. ฿7,999)
+        exchange_rate: Exchange rate from THB to USD (default: 0.035)
+        
+    Returns:
+        Price string in USD format (e.g. $279.97)
+    """
+    try:
+        price_str = price_str.replace('฿', '').replace(',', '')
+        price_thb = float(price_str)
+        
+        price_usd = price_thb * exchange_rate
+        return f"${price_usd:.2f}"
+    except (ValueError, AttributeError):
+        return price_str
+
+
 @task(name="Create Text Embeddings")
 def create_embeddings(
     df: pd.DataFrame, 
@@ -60,6 +81,8 @@ def create_embeddings(
         
         product_dict = row.to_dict()
         product_dict["embedding"] = embedding
+        
+        product_dict["price_usd"] = convert_price_to_usd(product_dict["price"])
         
         if pd.isna(product_dict["no_of_ratings"]):
             product_dict["no_of_ratings"] = None
